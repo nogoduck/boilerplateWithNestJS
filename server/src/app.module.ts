@@ -6,16 +6,20 @@ import { UserController } from './user/controller/user.controller';
 import { UserService } from './user/service/user.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
+import { UserModule } from './user/user.module';
 import * as mongoose from 'mongoose';
+import { User, UserSchema } from './user/model/user.model';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     MongooseModule.forRoot(
       `mongodb+srv://${process.env.DB_MONGO_ID}:${process.env.DB_MONGO_PASSWORD}@table0.zotlh.mongodb.net/${process.env.DB_MONGO_NAME}?retryWrites=true&w=majority`,
     ),
+    UserModule,
   ],
   controllers: [AppController, UserController],
   providers: [AppService, UserService],

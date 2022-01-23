@@ -1,8 +1,8 @@
-import { ApiProperty, PickType } from '@nestjs/swagger';
-import { UserModel } from '../model/user.model';
+import { PickType } from '@nestjs/swagger';
+import { User } from '../model/user.model';
 
-export class UserRequestDto extends PickType(UserModel, [
+export class UserRequestDto extends PickType(User, [
   'name',
   'email',
   'password',
-]) {}
+] as const) {}

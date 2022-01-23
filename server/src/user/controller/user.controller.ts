@@ -14,7 +14,7 @@ import { UserReadonlyDto } from '../dto/user.readonly.dto';
 import { UserRequestDto } from '../dto/user.request.dto';
 
 @Controller('user')
-@UseInterceptors(new SuccessInterceptor())
+@UseInterceptors(SuccessInterceptor)
 @UseFilters(HttpExceptionFilter)
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -23,8 +23,8 @@ export class UserController {
   @ApiResponse({ status: 200, description: '성공', type: UserReadonlyDto })
   @ApiResponse({ status: 500, description: '서버 에러' })
   @Post('signup')
-  signUp(@Body() userRequestDto: UserRequestDto) {
-    return this.userService.signUp(userRequestDto);
+  async signUp(@Body() userRequestDto: UserRequestDto) {
+    return await this.userService.signUp(userRequestDto);
   }
 
   @ApiOperation({ summary: '로그인' })

@@ -1,10 +1,35 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UserRequestDto } from '../dto/user.request.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { User } from '../model/user.model';
+import { Model } from 'mongoose';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
+  constructor(@InjectModel(User.name) private readonly user: Model<User>) {}
+
   async signUp(userRequestDto: UserRequestDto) {
-    return userRequestDto;
+    const { name, email, password } = userRequestDto;
+    const isEmailExist: boolean = await this.user.exists({ email });
+
+    if (isEmailExist) {
+      throw new UnauthorizedException('입력된 이메일은 이미 존재합니다.');
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = await this.user.create({
+      name,
+      email,
+      password: hashedPassword,
+    });
+
+    return newUser.readonlyData;
   }
 
   async signIn() {

@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { HttpExceptionFilter } from './common/exception/http-exception.filter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const MODE: boolean = process.env.NODE_ENV === 'development' ? true : false;
@@ -19,6 +20,7 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, document);
 
   app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalPipes(new ValidationPipe());
 
   // origin은 배포시 특정 URL을 사용하길 권장함
   app.enableCors({
