@@ -12,12 +12,17 @@ import { SuccessInterceptor } from '../../common/interceptor/success.interceptor
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { UserReadonlyDto } from '../dto/user.readonly.dto';
 import { UserRequestDto } from '../dto/user.request.dto';
+import { AuthService } from '../../auth/auth.service';
+import { LoginRequestDto } from '../../auth/dto/login.request.dto';
 
 @Controller('user')
 @UseInterceptors(SuccessInterceptor)
 @UseFilters(HttpExceptionFilter)
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly authService: AuthService,
+  ) {}
 
   @ApiOperation({ summary: '회원가입' })
   @ApiResponse({ status: 200, description: '성공', type: UserReadonlyDto })
@@ -28,9 +33,9 @@ export class UserController {
   }
 
   @ApiOperation({ summary: '로그인' })
-  @Post('signin')
-  signIn() {
-    return this.userService.signIn();
+  @Post('login')
+  signIn(@Body() loginRequestDto: LoginRequestDto) {
+    return this.authService.jwtLogin(loginRequestDto);
   }
 
   @ApiOperation({ summary: '로그아웃' })

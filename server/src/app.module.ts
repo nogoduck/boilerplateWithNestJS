@@ -9,6 +9,8 @@ import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { UserModule } from './user/user.module';
 import * as mongoose from 'mongoose';
 import { User, UserSchema } from './user/model/user.model';
+import { UserRepository } from './user/user.repository';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -20,9 +22,10 @@ import { User, UserSchema } from './user/model/user.model';
       `mongodb+srv://${process.env.DB_MONGO_ID}:${process.env.DB_MONGO_PASSWORD}@table0.zotlh.mongodb.net/${process.env.DB_MONGO_NAME}?retryWrites=true&w=majority`,
     ),
     UserModule,
+    AuthModule,
   ],
   controllers: [AppController, UserController],
-  providers: [AppService, UserService],
+  providers: [AppService, UserService, UserRepository],
 })
 export class AppModule implements NestModule {
   private readonly MODE: boolean =
