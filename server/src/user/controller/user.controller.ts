@@ -4,6 +4,7 @@ import {
   Get,
   Post,
   UseFilters,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from '../service/user.service';
@@ -14,6 +15,8 @@ import { UserReadonlyDto } from '../dto/user.readonly.dto';
 import { UserRequestDto } from '../dto/user.request.dto';
 import { AuthService } from '../../auth/auth.service';
 import { LoginRequestDto } from '../../auth/dto/login.request.dto';
+import { JwtAuthGuard } from '../../auth/jwt/jwt.guard';
+import { CurrentUser } from '../../common/decorators/user.decorator';
 
 @Controller('user')
 @UseInterceptors(SuccessInterceptor)
@@ -23,6 +26,12 @@ export class UserController {
     private readonly userService: UserService,
     private readonly authService: AuthService,
   ) {}
+
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  allUser(@CurrentUser() currentUser) {
+    return currentUser.readonlyData;
+  }
 
   @ApiOperation({ summary: '회원가입' })
   @ApiResponse({ status: 200, description: '성공', type: UserReadonlyDto })
