@@ -35,11 +35,19 @@ export class UserService {
     return newUser.readonlyData;
   }
 
-  async signIn() {
-    return 'signIn';
-  }
-
   async signOut() {
     return 'signOut: The client processes it';
+  }
+
+  async uploadImg(user: User, files: Express.Multer.File[]) {
+    const fileName = `user.profile/${files[0].filename}`;
+
+    console.log(fileName);
+    const newUser = await this.userRepository.findByIdAndUpdateImg(
+      user.id,
+      fileName,
+    );
+    console.log(newUser);
+    return newUser.readonlyData;
   }
 }

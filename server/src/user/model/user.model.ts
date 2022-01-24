@@ -41,7 +41,11 @@ export class User extends Document {
   @MinLength(8)
   password: string;
 
-  readonly readonlyData: { name: string; email: string };
+  @Prop({ default: 'http://placehold.it/250x250' })
+  @IsString()
+  profileURL: string;
+
+  readonly readonlyData: { name: string; email: string; profileURL };
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
@@ -51,5 +55,6 @@ UserSchema.virtual('readonlyData').get(function (this: User) {
   return {
     name: this.name,
     email: this.email,
+    profileURL: this.profileURL,
   };
 });

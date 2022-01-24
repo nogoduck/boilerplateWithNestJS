@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Post,
+  UploadedFiles,
   UseFilters,
   UseGuards,
   UseInterceptors,
@@ -17,6 +18,9 @@ import { AuthService } from '../../auth/auth.service';
 import { LoginRequestDto } from '../../auth/dto/login.request.dto';
 import { JwtAuthGuard } from '../../auth/jwt/jwt.guard';
 import { CurrentUser } from '../../common/decorators/user.decorator';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { multerOptions } from '../../common/utils/multer.options';
+import { User } from '../model/user.model';
 
 @Controller('user')
 @UseInterceptors(SuccessInterceptor)
@@ -51,5 +55,17 @@ export class UserController {
   @Get('signout')
   signOut() {
     return this.userService.signOut();
+  }
+
+  @Post('upload/profile')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FilesInterceptor('image', 1, multerOptions('user.profile')))
+  uploadFile(
+    @CurrentUser() currentUser: User,
+    @UploadedFiles() files: Array<Express.Multer.File>,
+  ) {
+    // const imgURI = `http://localhost:8000/static/user.profile/${file.filename[0]}`;
+    // console.log('imgURI >> ', imgURI);
+    return this.userService.uploadImg(currentUser, files);
   }
 }

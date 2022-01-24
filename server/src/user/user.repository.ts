@@ -30,4 +30,16 @@ export class UserRepository {
     const user = await this.user.findById(userId).select('-password');
     return user;
   }
+
+  // 해당하는 아이디에 이미지 URI 업데이트
+  async findByIdAndUpdateImg(
+    userId: string,
+    fileName: string,
+  ): Promise<User | null> {
+    const user = await this.user.findById(userId);
+    user.profileURL = `http://localhost:8000/static/${fileName}`;
+    const newUser = await user.save();
+    console.log('newUser >> ', newUser);
+    return newUser;
+  }
 }
